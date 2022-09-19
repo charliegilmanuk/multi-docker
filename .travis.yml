@@ -1,0 +1,16 @@
+sudo: required
+language: generic
+services:
+  - docker
+
+before_install:
+  - docker build -t charliegilman/complex -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true charliegilman/complex yarn test -- --coverage
+
+after_success:
+  - docker build -t charliegilman/multi-client ./client
+  - docker build -t charliegilman/multi-nginx ./nginx
+  - docker build -t charliegilman/multi-server ./server
+  - docker build -t charliegilman/multi-worker ./worker
